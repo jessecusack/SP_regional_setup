@@ -68,6 +68,46 @@ def bilinear_interpolation(xa, ya, fg, x, y):
 
 
 # %% [markdown]
+# # First we look at the different batymetry datasets
+
+# %%
+dcon = 50
+linewidths = 0.05
+clevs = np.arange(3500, 5500+dcon, dcon)
+
+fig, axs = plt.subplots(1, 2, figsize=(35, 20), sharex=True, sharey=True)
+
+for ax in axs:
+    ax.set_aspect('equal')
+
+C = axs[1].contourf(SSX, SSY, SSD, clevs, cmap='Blues', extend='both')
+axs[1].contour(SSX, SSY, SSD, clevs, linewidths=linewidths, colors='k')
+axs[1].set_title('Smith and Sandwell 19.1')
+C = axs[0].contourf(X, Y, B.merged, clevs, cmap='Blues', extend='both')
+axs[0].contour(X, Y, B.merged, clevs, linewidths=linewidths, colors='k')
+axs[0].set_title("Gunnar's merged")
+
+# %% [markdown]
+# # The multibeam datasets
+
+# %%
+dcon = 50
+linewidths = 0.05
+clevs = np.arange(3500, 5500+dcon, dcon)
+
+fig, axs = plt.subplots(1, 2, figsize=(20, 20), sharex=True, sharey=True)
+
+for ax in axs:
+    ax.set_aspect('equal')
+
+C = axs[0].contourf(X, Y, Bspamex, clevs, cmap='Blues', extend='both')
+axs[0].contour(X, Y, Bspamex, clevs, linewidths=linewidths, colors='k')
+axs[0].set_title('SPAMEX')
+C = axs[1].contourf(X, Y, Bmbrud, clevs, cmap='Blues', extend='both')
+axs[1].contour(X, Y, Bmbrud, clevs, linewidths=linewidths, colors='k')
+axs[1].set_title('MBRUD')
+
+# %% [markdown]
 # ## Because I don't know what version of Smith and Sandwell Gunnar used, lets reinterpolate that...
 
 # %%
