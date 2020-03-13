@@ -1,0 +1,7 @@
+*.ipynb
+.ipynb_checkpoints
+grid
+*.0000808704
+data
+data90
+.DS_Store
