@@ -96,10 +96,14 @@ ax.plot([lllon, lllon, urlon, urlon, lllon], [lllat, urlat, urlat, lllat, lllat]
 
 # %%
 nt = 15
-idxs = np.indices(depth.shape)
+zt = 2
+nr, nc = depth.shape
+w = np.zeros_like(depth)
+idxs = np.indices((nr-zt, nc-zt))
 wt = np.minimum(idxs[0, ...]/nt, 1.)
 wl = np.minimum(idxs[1, ...]/nt, 1.)
-w = wl*wt*wl[:, ::-1]*wt[::-1, :]
+winner = wl*wt*wl[:, ::-1]*wt[::-1, :]
+w[zt//2:-zt//2, zt//2:-zt//2] = winner
 
 fig, ax = plt.subplots(1, 1)
 ax.set_aspect('equal')
@@ -108,7 +112,7 @@ plt.colorbar(C)
 
 
 # %%
-fig, axs = plt.subplots(1, 2)
+fig, axs = plt.subplots(1, 2, figsize=(14, 6))
 axs[0].plot(YC[:, 30], w[:, 30])
 axs[1].plot(XC[60, :], w[60, :])
 
