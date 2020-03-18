@@ -25,6 +25,8 @@ depth = np.fromfile('grid/Depth_144x185', '>f').reshape((185, 144))
 XC = np.fromfile('grid/XC_144x185', '>f').reshape((185, 144))
 YC = np.fromfile('grid/YC_144x185', '>f').reshape((185, 144))
 
+bathy = np.fromfile('grid/BATHY_144x185_Box13', '>f').reshape((185, 144))
+
 MB = munch.munchify(utils.loadmat('merged_bathy.mat'))
 
 def bilinear_interpolation(xa, ya, fg, x, y):
@@ -101,8 +103,14 @@ w = wl*wt*wl[:, ::-1]*wt[::-1, :]
 
 fig, ax = plt.subplots(1, 1)
 ax.set_aspect('equal')
-ax.pcolormesh(XC, YC, w)
+C = ax.pcolormesh(XC, YC, w)
+plt.colorbar(C)
 
+
+# %%
+fig, axs = plt.subplots(1, 2)
+axs[0].plot(YC[:, 30], w[:, 30])
+axs[1].plot(XC[60, :], w[60, :])
 
 # %% [markdown]
 # ## Now we have to interpolate high res onto model grid...
@@ -112,7 +120,6 @@ BI = bilinear_interpolation(MB.lat, MB.lon, MB.SS_only, YC.flatten(), XC.flatten
 
 # %%
 new_depth = w*BI + (1-w)*depth
-new_depth = new_depth.astype('>f')
 
 # %%
 dcon = 50
@@ -140,12 +147,14 @@ cb.set_label('Difference (m)')
 # ## Save new bathymetry
 #
 # Also double check that it works...
+#
+# We need the minus sign because the input bathy should be negative!!!! We also need to make sure the big endian float 4 is correct.
 
 # %%
-new_depth.tofile('bathy.bin')
+((-1*new_depth).astype('>f')).tofile('out/bathy.bin')
 
 # %%
-test_ = np.fromfile('bathy.bin', '>f').reshape((185, 144))
+test_ = -np.fromfile('out/bathy.bin', '>f').reshape((185, 144))
 
 fig, ax = plt.subplots(1, 1)
 C = ax.pcolormesh(XC, YC, new_depth - test_, cmap='coolwarm', vmin=-500, vmax=500)
