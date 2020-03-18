@@ -27,6 +27,7 @@ import ocean_tools.sandwell as ssb
 import ocean_tools.utils as utils
 import munch
 import scipy.io as io
+import xarray as xr
 
 # DEFINE THE GRID USING GUNNARS GRID
 data_dir = os.path.expanduser('~/data/SamoanPassage/Bathy/')
@@ -51,6 +52,7 @@ Y = B.lat
 Bmbrud = B.mbrud
 Bspamex = B.spamex
 
+Bnc = xr.load_dataset('/Users/jmcusack/data/SamoanPassage/Bathy/merged_200_-171.5_-167.5_-11_-6.5.nc')
 
 def bilinear_interpolation(xa, ya, fg, x, y):
     i2 = np.searchsorted(xa, x)
@@ -75,17 +77,20 @@ dcon = 50
 linewidths = 0.05
 clevs = np.arange(3500, 5500+dcon, dcon)
 
-fig, axs = plt.subplots(1, 2, figsize=(35, 20), sharex=True, sharey=True)
+fig, axs = plt.subplots(1, 3, figsize=(35, 20), sharex=True, sharey=True)
 
 for ax in axs:
     ax.set_aspect('equal')
 
-C = axs[1].contourf(SSX, SSY, SSD, clevs, cmap='Blues', extend='both')
-axs[1].contour(SSX, SSY, SSD, clevs, linewidths=linewidths, colors='k')
-axs[1].set_title('Smith and Sandwell 19.1')
 C = axs[0].contourf(X, Y, B.merged, clevs, cmap='Blues', extend='both')
 axs[0].contour(X, Y, B.merged, clevs, linewidths=linewidths, colors='k')
 axs[0].set_title("Gunnar's merged")
+C = axs[1].contourf(SSX, SSY, SSD, clevs, cmap='Blues', extend='both')
+axs[1].contour(SSX, SSY, SSD, clevs, linewidths=linewidths, colors='k')
+axs[1].set_title('Smith and Sandwell 19.1')
+C = axs[2].contourf(Bnc.lon, Bnc.lat, Bnc.z, clevs, cmap='Blues', extend='both')
+axs[2].contour(Bnc.lon, Bnc.lat, Bnc.z, clevs, linewidths=linewidths, colors='k')
+axs[2].set_title('Gunnars best merged...?')
 
 # %% [markdown]
 # # The multibeam datasets
